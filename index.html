@@ -15,10 +15,18 @@
       window.onload = () => {
         const mode = JSON.parse(window.localStorage.getItem("MODE"));
         root.setAttribute("data-bs-theme", mode);
+        if (!mode) {
+          root.classList.add("bg-light");
+        }
       };
       window.onstorage = (e) => {
         const mode = JSON.parse(window.localStorage.getItem("MODE"));
         root.setAttribute("data-bs-theme", mode);
+        if (!mode) {
+          root.classList.add("bg-light");
+        } else {
+          root.classList.remove("bg-light");
+        }
       };
     </script>
   </body>

@@ -1,11 +1,11 @@
-# Notes Keeper
+## Notes Keeper
 
-A single browser based note keeping application.
+A browser storage based note keeping application.
 
-### Features
+#### Features
 
 Markdown supported | Tagging enabled | Dark mode supported
 
-### Used Tech
+#### Used Tech
 
 React | TypeScript | Bootstrap

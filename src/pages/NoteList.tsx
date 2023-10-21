@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import {
   Badge,
   Button,
@@ -11,10 +11,8 @@ import {
 } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import ReactSelect from "react-select";
-import { Tag } from "../App";
+import { Tag, ThemeContext } from "../App";
 import styles from "./NoteList.module.css";
-import { useLocalStorage } from "../hooks/useLocalStorage";
-import { MoonFill, SunFill } from "react-bootstrap-icons";
 
 type SimplifiedNote = {
   id: string;
@@ -46,15 +44,7 @@ export function NoteList({
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
   const [title, setTitle] = useState("");
   const [editTagsModalIsOpen, setEditTagsModalIsOpen] = useState(false);
-  const [mode, setMode] = useLocalStorage("MODE", "");
-
-  const handleMode = () => {
-    if (!mode) {
-      setMode("dark");
-    } else {
-      setMode("");
-    }
-  };
+  const mode = useContext(ThemeContext);
 
   const filteredNotes = useMemo(() => {
     return notes.filter((note) => {
@@ -77,12 +67,6 @@ export function NoteList({
         </Col>
         <Col xs="auto">
           <Stack gap={2} direction="horizontal">
-            <Button
-              variant={mode === "dark" ? "dark" : "light"}
-              onClick={handleMode}
-            >
-              {mode === "dark" ? <SunFill /> : <MoonFill />}
-            </Button>
             <Link to={"/new"}>
               <Button variant="primary">Create</Button>
             </Link>

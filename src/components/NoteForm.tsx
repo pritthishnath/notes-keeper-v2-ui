@@ -1,10 +1,9 @@
-import { FormEvent, useRef, useState } from "react";
+import { FormEvent, useContext, useRef, useState } from "react";
 import { Button, Col, Form, Row, Stack } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import CreateableReactSelect from "react-select/creatable";
-import { NoteData, Tag } from "../App";
+import { NoteData, Tag, ThemeContext } from "../App";
 import { v4 } from "uuid";
-import { useLocalStorage } from "../hooks/useLocalStorage";
 
 type NoteFormProps = {
   onSubmit: (data: NoteData) => void;
@@ -24,7 +23,7 @@ export function NoteForm({
   const markdownRef = useRef<HTMLTextAreaElement>(null);
   const [selectedTags, setSelectedTags] = useState<Tag[]>(tags);
   const navigate = useNavigate();
-  const [mode] = useLocalStorage("MODE", "");
+  const mode = useContext(ThemeContext);
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
