@@ -51,16 +51,16 @@ function App() {
     });
   }, [notes, tags]);
 
-  const onCreateNote = ({ tags, ...data }: NoteData) => {
+  function onCreateNote({ tags, ...data }: NoteData) {
     setNotes((prevNotes) => {
       return [
         ...prevNotes,
         { ...data, id: uuidV4(), tagIds: tags.map((tag) => tag.id) },
       ];
     });
-  };
+  }
 
-  const onUpdateNote = (id: string, { tags, ...data }: NoteData) => {
+  function onUpdateNote(id: string, { tags, ...data }: NoteData) {
     setNotes((prevNotes) => {
       return prevNotes.map((note) => {
         if (note.id === id) {
@@ -74,19 +74,19 @@ function App() {
         }
       });
     });
-  };
+  }
 
-  const onDeleteNote = (id: string) => {
+  function onDeleteNote(id: string) {
     setNotes((prevNotes) => {
       return prevNotes.filter((note) => note.id !== id);
     });
-  };
+  }
 
-  const addTag = (tag: Tag) => {
+  function addTag(tag: Tag) {
     setTags((prevTags) => [...prevTags, tag]);
-  };
+  }
 
-  const updateTag = (id: string, label: string) => {
+  function updateTag(id: string, label: string) {
     setTags((prevTags) => {
       return prevTags.map((tag) => {
         if (tag.id === id) {
@@ -96,21 +96,21 @@ function App() {
         }
       });
     });
-  };
+  }
 
-  const deleteTag = (id: string) => {
+  function deleteTag(id: string) {
     setTags((prevTags) => prevTags.filter((tag) => tag.id !== id));
-  };
+  }
 
   const [mode, setMode] = useLocalStorage("MODE", "");
 
-  const handleMode = () => {
+  function handleMode() {
     if (!mode) {
       setMode("dark");
     } else {
       setMode("");
     }
-  };
+  }
 
   return (
     <ThemeContext.Provider value={mode}>
