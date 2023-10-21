@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link id="icon" rel="icon" type="image/svg+xml" href="/icon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notes Keeper</title>
+  </head>
+  <body data-bs-theme="">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <script>
+      const root = document.body;
+
+      window.onload = () => {
+        const mode = JSON.parse(window.localStorage.getItem("MODE"));
+        root.setAttribute("data-bs-theme", mode);
+      };
+      window.onstorage = (e) => {
+        const mode = JSON.parse(window.localStorage.getItem("MODE"));
+        root.setAttribute("data-bs-theme", mode);
+      };
+    </script>
+  </body>
+</html>
