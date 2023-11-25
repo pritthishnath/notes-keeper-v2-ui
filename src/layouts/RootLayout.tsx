@@ -400,7 +400,9 @@ function RootLayoutElement({ unsyncNotes }: { unsyncNotes: () => void }) {
             <Button
               variant={mode === "dark" ? "dark" : "light"}
               onClick={() => {
-                window.open("https://github.com/pritthishnath/notes-keeper");
+                window.open(
+                  "https://github.com/pritthishnath/notes-keeper-v2-ui"
+                );
               }}
             >
               <Github />
