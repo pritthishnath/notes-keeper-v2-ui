@@ -1,11 +1,11 @@
-import { NoteData, Tag } from "../App";
+import { RawNoteDataType, TagType } from "../types";
 import { NoteForm } from "../components/NoteForm";
 import { useNote } from "../layouts/NoteLayout";
 
 type EditNoteProps = {
-  onSubmit: (id: string, data: NoteData) => void;
-  onAddTag: (tag: Tag) => void;
-  availableTags: Tag[];
+  onSubmit: (id: string, data: RawNoteDataType) => void;
+  onAddTag: (tag: TagType) => void;
+  availableTags: TagType[];
 };
 
 export function EditNote({ onSubmit, onAddTag, availableTags }: EditNoteProps) {
@@ -17,7 +17,7 @@ export function EditNote({ onSubmit, onAddTag, availableTags }: EditNoteProps) {
         title={note.title}
         markdown={note.markdown}
         tags={note.tags}
-        onSubmit={(data) => onSubmit(note.id, data)}
+        onSubmit={(data: RawNoteDataType) => onSubmit(note.id, data)}
         onAddTag={onAddTag}
         availableTags={availableTags}
       />

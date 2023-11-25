@@ -2,14 +2,16 @@ import { FormEvent, useContext, useRef, useState } from "react";
 import { Button, Col, Form, Row, Stack } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import CreateableReactSelect from "react-select/creatable";
-import { NoteData, Tag, ThemeContext } from "../App";
+import { ThemeContext } from "../App";
+import { NoteDataType, RawNoteDataType, TagType } from "../types";
 import { v4 } from "uuid";
+import { Check2Circle } from "react-bootstrap-icons";
 
 type NoteFormProps = {
-  onSubmit: (data: NoteData) => void;
-  onAddTag: (tag: Tag) => void;
-  availableTags: Tag[];
-} & Partial<NoteData>;
+  onSubmit: (data: RawNoteDataType) => void;
+  onAddTag: (tag: TagType) => void;
+  availableTags: TagType[];
+} & Partial<NoteDataType>;
 
 export function NoteForm({
   onSubmit,
@@ -21,9 +23,10 @@ export function NoteForm({
 }: NoteFormProps) {
   const titleRef = useRef<HTMLInputElement>(null);
   const markdownRef = useRef<HTMLTextAreaElement>(null);
-  const [selectedTags, setSelectedTags] = useState<Tag[]>(tags);
+  const [selectedTags, setSelectedTags] =
+    useState<{ id: string; label: string }[]>(tags);
   const navigate = useNavigate();
-  const mode = useContext(ThemeContext);
+  const [mode] = useContext(ThemeContext);
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -31,7 +34,7 @@ export function NoteForm({
     onSubmit({
       title: titleRef.current!.value,
       markdown: markdownRef.current!.value,
-      tags: selectedTags,
+      tagIds: selectedTags.map((tag) => tag.id),
     });
 
     navigate("..");
@@ -60,7 +63,11 @@ export function NoteForm({
                 }}
                 classNamePrefix={mode === "dark" ? "bg-dark text-white " : ""}
                 onCreateOption={(label) => {
-                  const newTag = { id: v4(), label: label };
+                  const newTag = {
+                    id: v4(),
+                    label: label,
+                    synced: false,
+                  };
 
                   onAddTag(newTag);
                   setSelectedTags((prevTags) => [...prevTags, newTag]);
@@ -69,12 +76,27 @@ export function NoteForm({
                   return { label: tag.label, value: tag.id };
                 })}
                 options={availableTags.map((tag) => {
-                  return { label: tag.label, value: tag.id };
+                  return { ...tag, label: tag.label, value: tag.id };
                 })}
+                formatOptionLabel={(
+                  data: { label: string; value: string } & Partial<TagType>
+                ) => {
+                  return (
+                    <>
+                      {data.label}
+                      &nbsp;&nbsp;
+                      {data.synced && (
+                        <>
+                          <Check2Circle className="text-success" /> &nbsp;&nbsp;
+                        </>
+                      )}
+                    </>
+                  );
+                }}
                 onChange={(tags) => {
                   setSelectedTags(
                     tags.map((tag) => {
-                      return { id: tag.value, label: tag.label };
+                      return { ...tag, id: tag.value, label: tag.label };
                     })
                   );
                 }}

@@ -11,24 +11,32 @@ import {
 } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import ReactSelect from "react-select";
-import { Tag, ThemeContext } from "../App";
+import { ThemeContext } from "../App";
 import styles from "./NoteList.module.css";
+import { NoteType, TagType } from "../types";
+import { useAuth } from "../hooks/useAuth";
+import {
+  Check2Circle,
+  ExclamationLg,
+  JournalText,
+  PencilSquare,
+} from "react-bootstrap-icons";
+import { useAuthCheck } from "../hooks/useAuthCheck";
 
-type SimplifiedNote = {
-  id: string;
-  title: string;
-  tags: Tag[];
+type NoteCardProps = {
+  note: NoteType;
 };
 
 type NoteListProps = {
-  availableTags: Tag[];
-  notes: SimplifiedNote[];
+  availableTags: TagType[];
+  notes: NoteType[];
   onUpdateTag: (id: string, label: string) => void;
   onDeleteTag: (id: string) => void;
+  onSyncAll: () => void;
 };
 
 type EditTagsModalProps = {
-  availableTags: Tag[];
+  availableTags: TagType[];
   show: boolean;
   handleClose: () => void;
   onUpdate: (id: string, label: string) => void;
@@ -40,12 +48,18 @@ export function NoteList({
   notes,
   onUpdateTag,
   onDeleteTag,
+  onSyncAll,
 }: NoteListProps) {
-  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+  useAuthCheck();
+  const [selectedTags, setSelectedTags] = useState<
+    { id: string; label: string }[]
+  >([]);
   const [title, setTitle] = useState("");
   const [editTagsModalIsOpen, setEditTagsModalIsOpen] = useState(false);
-  const mode = useContext(ThemeContext);
+  const [mode] = useContext(ThemeContext);
+  const { isAuth } = useAuth();
 
+  //NOTE - Filtering functionality
   const filteredNotes = useMemo(() => {
     return notes.filter((note) => {
       return (
@@ -67,6 +81,11 @@ export function NoteList({
         </Col>
         <Col xs="auto">
           <Stack gap={2} direction="horizontal">
+            {isAuth && (
+              <Button variant="outline-primary" onClick={() => onSyncAll()}>
+                Sync All
+              </Button>
+            )}
             <Link to={"/new"}>
               <Button variant="primary">Create</Button>
             </Link>
@@ -74,7 +93,7 @@ export function NoteList({
               variant="outline-secondary"
               onClick={() => setEditTagsModalIsOpen(true)}
             >
-              Edit Tags
+              <PencilSquare /> &nbsp; Local Tags
             </Button>
           </Stack>
         </Col>
@@ -107,12 +126,31 @@ export function NoteList({
                   return { label: tag.label, value: tag.id };
                 })}
                 options={availableTags.map((tag) => {
-                  return { label: tag.label, value: tag.id };
+                  return {
+                    ...tag,
+                    label: tag.label,
+                    value: tag.id,
+                  };
                 })}
+                formatOptionLabel={(
+                  data: { label: string; value: string } & Partial<TagType>
+                ) => {
+                  return (
+                    <>
+                      {data.label}
+                      &nbsp;&nbsp;
+                      {data.synced && (
+                        <>
+                          <Check2Circle className="text-success" /> &nbsp;&nbsp;
+                        </>
+                      )}
+                    </>
+                  );
+                }}
                 onChange={(tags) => {
                   setSelectedTags(
                     tags.map((tag) => {
-                      return { id: tag.value, label: tag.label };
+                      return { ...tag, id: tag.value, label: tag.label };
                     })
                   );
                 }}
@@ -123,13 +161,25 @@ export function NoteList({
         </Row>
       </Form>
       <Row xs={1} sm={2} lg={3} xl={4} className="g-3">
-        {filteredNotes.map((note) => {
-          return (
-            <Col key={note.id}>
-              <NoteCard id={note.id} title={note.title} tags={note.tags} />
-            </Col>
-          );
-        })}
+        {notes.length > 0 ? (
+          filteredNotes.map((note) => {
+            return (
+              <Col key={note.id}>
+                <NoteCard note={note} />
+              </Col>
+            );
+          })
+        ) : (
+          <div className="text-center mt-5 w-100">
+            <JournalText fontSize="5rem" />
+            <h3 className="my-5">No Notes Yet</h3>
+            <p>
+              <Link className="text-decoration-none" to={"/new"}>
+                Create your first note!
+              </Link>
+            </p>
+          </div>
+        )}
       </Row>
       <EditTagsModal
         availableTags={availableTags}
@@ -142,11 +192,11 @@ export function NoteList({
   );
 }
 
-function NoteCard({ id, title, tags }: SimplifiedNote) {
+function NoteCard({ note }: NoteCardProps) {
   return (
     <Card
       as={Link}
-      to={`/${id}`}
+      to={`/${note.id}`}
       className={`h-100 text-reset text-decoration-none ${styles.card}`}
     >
       <Card.Body>
@@ -154,22 +204,40 @@ function NoteCard({ id, title, tags }: SimplifiedNote) {
           gap={2}
           className="h-100 align-items-center justify-content-center"
         >
-          <span className="fs-5">{title}</span>
-          {tags.length > 0 && (
-            <Stack
-              gap={1}
-              direction="horizontal"
-              className="justify-content-center flex-wrap"
-            >
-              {tags.map((tag) => {
-                return (
-                  <Badge key={tag.id} className="text-truncate">
-                    {tag.label}
-                  </Badge>
-                );
-              })}
-            </Stack>
-          )}
+          <span className="fs-5">{note.title}</span>
+          <Stack
+            direction="horizontal"
+            gap={2}
+            className="justify-content-center"
+          >
+            {note.tags.length > 0 && (
+              <Stack
+                gap={1}
+                direction="horizontal"
+                className="justify-content-center flex-wrap"
+              >
+                {note.tags.map((tag) => {
+                  return (
+                    <Badge key={tag.id} className="text-truncate">
+                      {tag.label}
+                    </Badge>
+                  );
+                })}
+              </Stack>
+            )}
+            {note.synced ? (
+              <div className="badge bg-success me-4">
+                <Check2Circle /> synced
+              </div>
+            ) : (
+              note._id &&
+              note._id.length > 0 && (
+                <div className="badge bg-warning me-4">
+                  <ExclamationLg /> updated
+                </div>
+              )
+            )}
+          </Stack>
         </Stack>
       </Card.Body>
     </Card>
@@ -186,30 +254,33 @@ function EditTagsModal({
   return (
     <Modal show={show} onHide={handleClose}>
       <Modal.Header closeButton>
-        <Modal.Title>Edit Tags</Modal.Title>
+        <Modal.Title>Edit Local Tags</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form className="w-100">
           <Stack gap={2}>
-            {availableTags.map((tag) => (
-              <Row key={tag.id}>
-                <Col>
-                  <Form.Control
-                    type="text"
-                    value={tag.label}
-                    onChange={(e) => onUpdate(tag.id, e.target.value)}
-                  />
-                </Col>
-                <Col xs="auto">
-                  <Button
-                    variant="outline-danger"
-                    onClick={() => onDelete(tag.id)}
-                  >
-                    &times;
-                  </Button>
-                </Col>
-              </Row>
-            ))}
+            {availableTags.map((tag) => {
+              if (!tag.synced)
+                return (
+                  <Row key={tag.id}>
+                    <Col>
+                      <Form.Control
+                        type="text"
+                        value={tag.label}
+                        onChange={(e) => onUpdate(tag.id, e.target.value)}
+                      />
+                    </Col>
+                    <Col xs="auto">
+                      <Button
+                        variant="outline-danger"
+                        onClick={() => onDelete(tag.id)}
+                      >
+                        &times;
+                      </Button>
+                    </Col>
+                  </Row>
+                );
+            })}
           </Stack>
         </Form>
       </Modal.Body>

@@ -1,11 +1,11 @@
 ## Notes Keeper
 
-A browser storage based note keeping application.
+A Custom mardown notes keeping application.
 
 #### Features
 
-Markdown supported | Tagging enabled | Dark mode supported
+User registration | Global syncing and Link sharing | Dark mode supported
 
 #### Used Tech
 
-React | TypeScript | Bootstrap
+React | TypeScript | Bootstrap | React-Select | React Hook Form | Custom hooks | Caddy web server

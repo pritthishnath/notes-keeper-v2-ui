@@ -2,25 +2,29 @@
   "name": "notes-keeper",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
   "dependencies": {
+    "axios": "^1.6.1",
     "bootstrap": "^5.3.2",
+    "express": "^4.18.2",
     "react": "^18.2.0",
     "react-bootstrap": "^2.9.0",
     "react-bootstrap-icons": "^1.10.3",
     "react-dom": "^18.2.0",
+    "react-hook-form": "^7.48.2",
     "react-markdown": "^9.0.0",
     "react-router-dom": "^6.17.0",
     "react-select": "^5.7.7",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
+    "@types/axios": "^0.14.0",
+    "@types/node": "^20.9.4",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@types/uuid": "^9.0.6",

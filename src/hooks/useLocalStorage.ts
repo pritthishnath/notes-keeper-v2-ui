@@ -5,14 +5,14 @@ export function useLocalStorage<T>(key: string, initialValue: T | (() => T)) {
     const jsonValue = localStorage.getItem(key);
 
     if (jsonValue == null) {
-      // If value doesn't exist then initialize the value
+      //NOTE - If value doesn't exist then initialize the value
       if (typeof initialValue === "function") {
         return (initialValue as () => T)();
       } else {
         return initialValue;
       }
     } else {
-      // If value exists in local storage then return the value
+      //NOTE - If value exists in local storage then return the value
       return JSON.parse(jsonValue);
     }
   });

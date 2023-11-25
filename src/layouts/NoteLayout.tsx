@@ -4,10 +4,10 @@ import {
   useOutletContext,
   useParams,
 } from "react-router-dom";
-import { Note } from "../App";
+import { NoteType } from "../types";
 
 type NoteLayoutProps = {
-  notes: Note[];
+  notes: NoteType[];
 };
 
 export function NoteLayout({ notes }: NoteLayoutProps) {
@@ -21,5 +21,5 @@ export function NoteLayout({ notes }: NoteLayoutProps) {
 }
 
 export function useNote() {
-  return useOutletContext<Note>();
+  return useOutletContext<NoteType>();
 }
