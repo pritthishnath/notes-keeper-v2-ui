@@ -4,7 +4,7 @@ import { AuthContextStateType } from "../types";
 import { AuthAPI } from "../utils/api-helper";
 
 export function useAuthCheck() {
-  const [_, setAuthContext] = useContext(AuthContext);
+  const [, setAuthContext] = useContext(AuthContext);
 
   useEffect(() => {
     getUser();

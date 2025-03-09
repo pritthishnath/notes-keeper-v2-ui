@@ -14,8 +14,6 @@ export function useServerKey() {
     const res = await AuthAPI.serverKey();
 
     setKey(res.data.serverKey);
-    if (!res.data?.error) {
-    }
   }
 
   return [key, setKey] as [string, typeof setKey];

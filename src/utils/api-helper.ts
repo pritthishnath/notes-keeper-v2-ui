@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // import axios from "axios";
 import { AxiosError, AxiosResponse } from "axios";
 import { axiosClient } from "../lib/axiosClient";
@@ -6,7 +7,7 @@ export type AsyncDispatcherReturnType = Promise<
   (AxiosResponse | AxiosError | string | null)[]
 >;
 
-export function debounce(fn: Function, delay: number) {
+export function debounce(fn: (...args: any[]) => void, delay: number) {
   let timer: ReturnType<typeof setTimeout>;
   return function (...args: any[]) {
     clearTimeout(timer);

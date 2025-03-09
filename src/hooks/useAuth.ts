@@ -1,11 +1,16 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useContext } from "react";
 import { AsyncDispatcherReturnType, AuthAPI } from "../utils/api-helper";
-import { AxiosResponse } from "axios";
+import { AxiosError, AxiosResponse } from "axios";
 import { AuthContext } from "../App";
 import { AuthContextStateType } from "../types";
 
 export type AuthDispatcherType = (
-  fn: Function,
+  fn: (
+    ...x: any[]
+  ) => Promise<
+    (string | AxiosResponse<any, any> | AxiosError<unknown, any> | null)[]
+  >,
   data?: object,
   stage?: string
 ) => AsyncDispatcherReturnType;
@@ -25,20 +30,6 @@ export function useAuth() {
       stage
     );
 
-    // if (err instanceof AxiosError) {
-    //   setAuthContext((state: AuthContextStateType) => ({
-    //     ...state,
-    //     authLoading: false,
-    //   }));
-    // } else {
-    // if (res && !res.data?.error) {
-    //   setAuthContext((state: AuthContextStateType) => ({
-    //     ...state,
-    //     isAuth: res.data.user !== undefined ? res.data.user : true,
-    //     authLoading: false,
-    //   }));
-    // }
-
     setAuthContext((state: AuthContextStateType) => ({
       ...state,
       authLoading: false,
@@ -47,24 +38,20 @@ export function useAuth() {
   };
 
   const logout = async () => {
-    try {
-      setAuthContext((state: AuthContextStateType) => ({
-        ...state,
-        authLoading: true,
-      }));
+    setAuthContext((state: AuthContextStateType) => ({
+      ...state,
+      authLoading: true,
+    }));
 
-      const res = await AuthAPI.logout();
+    const res = await AuthAPI.logout();
 
-      setAuthContext((state: AuthContextStateType) => ({
-        ...state,
-        isAuth: false,
-        authLoading: false,
-      }));
+    setAuthContext((state: AuthContextStateType) => ({
+      ...state,
+      isAuth: false,
+      authLoading: false,
+    }));
 
-      return res;
-    } catch (error) {
-      throw error;
-    }
+    return res;
   };
 
   return {

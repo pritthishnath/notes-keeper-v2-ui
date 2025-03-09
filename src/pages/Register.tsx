@@ -10,6 +10,12 @@ import { AxiosError, AxiosResponse } from "axios";
 import { IncomingErrorResponseDataType } from "../types";
 import { Alert } from "react-bootstrap";
 
+type FormValues = {
+  username: string;
+  email: string;
+  otp: string;
+};
+
 const validationRules = {
   username: {
     required: "Please enter a username",
@@ -38,7 +44,7 @@ const validationRules = {
     },
     maxLength: {
       value: 32,
-      message: "Maximum 32 characters",
+      message: "Maximum 32 0haracters",
     },
   },
   otp: {
@@ -51,7 +57,7 @@ const RegisterView = () => {
   const { authDispatcher, authLoading } = useAuth();
   const [serverKey, setKey] = useServerKey();
 
-  const [stage, setStage] = useState("1");
+  const [stage, setStage] = useState("0");
 
   const {
     register,
@@ -59,7 +65,7 @@ const RegisterView = () => {
     formState: { errors },
     setError,
     clearErrors,
-  } = useForm();
+  } = useForm<FormValues>();
 
   const navigate = useNavigate();
 
@@ -82,7 +88,7 @@ const RegisterView = () => {
 
   const submitData: SubmitHandler<FieldValues> = async (data) => {
     clearErrors();
-    if (stage === "1") {
+    if (stage === "0") {
       const [res, err] = (await authDispatcher(
         AuthAPI.register,
         {
@@ -129,7 +135,7 @@ const RegisterView = () => {
         method="post"
         onSubmit={handleSubmit(submitData)}
       >
-        <div className={`${stage !== "1" && "d-none"}`}>
+        <div className={`${stage !== "0" && "d-none"}`}>
           <div className="mb-3">
             <label htmlFor="username" className="form-label">
               Username
@@ -141,7 +147,7 @@ const RegisterView = () => {
               aria-describedby="nameHelp"
               {...register(
                 "username",
-                stage === "1" ? validationRules.username : {}
+                stage === "0" ? validationRules.username : {}
               )}
               defaultValue=""
             />
@@ -158,7 +164,7 @@ const RegisterView = () => {
               className={`form-control ${errors?.email && "is-invalid"}`}
               id="email"
               aria-describedby="emailHelp"
-              {...register("email", stage === "1" ? validationRules.email : {})}
+              {...register("email", stage === "0" ? validationRules.email : {})}
               defaultValue=""
             />
             {errors?.email && (
@@ -188,7 +194,7 @@ const RegisterView = () => {
               <ErrorMessage message={errors?.otp.message as string} />
             )}
           </div>
-          <div className="mb-3">
+          {/* <div className="mb-3">
             <label htmlFor="password" className="form-label">
               Create new password
             </label>
@@ -205,10 +211,10 @@ const RegisterView = () => {
             {errors?.password && (
               <ErrorMessage message={errors?.password.message as string} />
             )}
-          </div>
+          </div> */}
         </div>
         <button type="submit" className="btn btn-primary w-100">
-          {authLoading ? "Processing..." : stage === "1" ? "Next" : "Submit"}
+          {authLoading ? "Processing..." : stage === "0" ? "Next" : "Submit"}
         </button>
         <div className="my-3">
           <p>
