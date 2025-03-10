@@ -29,7 +29,7 @@ import {
   RawNoteDataType,
 } from "../types";
 import { useSyncStore } from "../hooks/useSyncStore";
-import { KeeperAPI } from "../utils/api-helper";
+import { AuthAPI, KeeperAPI } from "../utils/api-helper";
 import { NoteReadOnly } from "../pages/NoteReadOnly";
 import { useAuthCheck } from "../hooks/useAuthCheck";
 
@@ -350,6 +350,44 @@ function RootLayoutElement({ unsyncNotes }: { unsyncNotes: () => void }) {
     }
   }
 
+  async function handleAuthClick() {
+    const width = 500;
+    const height = 600;
+    const left = (window.innerWidth - width) / 2;
+    const top = (window.innerHeight - height) / 2;
+
+    // const redirectUri = "https://login.pnath.in/auth/callback";
+
+    const authUrl = `https://login.pnath.in`;
+
+    const authWindow = window.open(
+      authUrl,
+      "Login",
+      `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`
+    );
+
+    const handleMessage = async (event: MessageEvent) => {
+      if (!event.origin || event.origin !== "https://login.pnath.in") {
+        return;
+      }
+        if (event.data.status === "AUTH_SUCCESS") {
+          const code = event.data.code;
+          
+          await AuthAPI.getToken(code);
+          window.location.reload();
+        }
+        
+      cleanup();
+    };
+
+    const cleanup = () => {
+      window.removeEventListener("message", handleMessage);
+      authWindow?.close();
+    };
+
+    window.addEventListener("message", handleMessage);
+  }
+
   return (
     <>
       <Row className="my-3">
@@ -374,11 +412,13 @@ function RootLayoutElement({ unsyncNotes }: { unsyncNotes: () => void }) {
               </div>
             )}
             {!isAuth ? (
-              <Link to={"/auth"}>
-                <div role="button" className="badge bg-primary pointer">
-                  Login to Backup
-                </div>
-              </Link>
+              <div
+                onClick={handleAuthClick}
+                role="button"
+                className="badge bg-primary pointer"
+              >
+                Login to Backup
+              </div>
             ) : (
               <div
                 role="button"

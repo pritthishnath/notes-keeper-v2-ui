@@ -42,12 +42,6 @@ export const AuthAPI = {
   serverKey: async () => {
     return await axiosClient.get("/auth/server-key");
   },
-  checkUniqueId: async (uniqueId: string, type: string) => {
-    return await asyncDispatcher(
-      axiosClient.get,
-      `/auth/register/${uniqueId}?type=${type}`
-    );
-  },
   register: async (data: object, stage: string) => {
     return await asyncDispatcher(
       axiosClient.post,
@@ -55,6 +49,9 @@ export const AuthAPI = {
       data
     );
   },
+  getToken: async (code: string) => {
+    return await axiosClient.get(`/auth/token?code=${code}`)
+  }
 };
 
 // export const checkUniqueIdDebounce = async (
