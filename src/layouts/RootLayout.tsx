@@ -358,7 +358,7 @@ function RootLayoutElement({ unsyncNotes }: { unsyncNotes: () => void }) {
 
     // const redirectUri = "https://login.pnath.in/auth/callback";
 
-    const authUrl = `https://login.pnath.in`;
+    const authUrl = `https://login.pnath.in?client_origin=${window.location.origin}`;
 
     const authWindow = window.open(
       authUrl,
@@ -367,16 +367,16 @@ function RootLayoutElement({ unsyncNotes }: { unsyncNotes: () => void }) {
     );
 
     const handleMessage = async (event: MessageEvent) => {
-      if (!event.origin || event.origin !== "https://login.pnath.in") {
+      if (!event.origin || event.origin !== "http://login.pnath.in") {
         return;
       }
-        if (event.data.status === "AUTH_SUCCESS") {
-          const code = event.data.code;
-          
-          await AuthAPI.getToken(code);
-          window.location.reload();
-        }
-        
+      if (event.data.status === "AUTH_SUCCESS") {
+        const code = event.data.code;
+
+        await AuthAPI.getToken(code);
+        window.location.reload();
+      }
+
       cleanup();
     };
 
