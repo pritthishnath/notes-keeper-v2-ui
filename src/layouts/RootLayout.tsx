@@ -367,7 +367,7 @@ function RootLayoutElement({ unsyncNotes }: { unsyncNotes: () => void }) {
     );
 
     const handleMessage = async (event: MessageEvent) => {
-      if (!event.origin || event.origin !== "http://login.pnath.in") {
+      if (!event.origin || event.origin !== "https://login.pnath.in") {
         return;
       }
       if (event.data.status === "AUTH_SUCCESS") {
